@@ -1,0 +1,41 @@
+def _minimax(self,id, board,depth):
+    curr_score = self._eval_function(id,board)
+
+    #check if at base case
+    if depth <= 0:
+        return curr_score
+    
+    #Check if Win or Tie State is reached
+    if(curr_score > 100000):
+        return curr_score - 1
+    if(curr_score < -100000):
+        return curr_score + 1
+    if self._is_tie(board):
+        return 0
+
+    #Look through each possible spot and select best one
+    best_score = -100000000
+    for i in range(len(board)):
+
+        #if collumn isn't open, don't check it
+        if not (board[i][-1] == 0):
+            continue
+
+        #find top open spot
+        row = self._find_top_spot_open(board,i)
+        board[i][row] = id
+
+        #use minimax to get score
+        score = self._minimax(self._flip_player(id),board,depth-1) * -1
+        best_score = max(score,best_score)
+
+        board[i][row] = 0 #reset board
+    
+    #don't be mean
+    if(best_score > 100000):
+        return best_score - 1
+    if(best_score < -100000):
+        return best_score + 1
+
+    #return the Score of best position
+    return best_score
